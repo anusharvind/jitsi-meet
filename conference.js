@@ -2131,7 +2131,7 @@ export default {
 
         // call hangup
         APP.UI.addListener(UIEvents.HANGUP, () => {
-            this.hangup(true);
+            this.hangup(false);
         });
 
         // logout
@@ -2140,7 +2140,7 @@ export default {
                 if (url) {
                     UIUtil.redirect(url);
                 } else {
-                    this.hangup(true);
+                    this.hangup(false);
                 }
             });
         });

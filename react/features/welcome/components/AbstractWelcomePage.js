@@ -190,7 +190,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _onJoin() {
-        const room = this.state.room || this.state.generatedRoomname;
+        const room = this.state.room || this.state.generatedRoomname || 'fs-' + window.performance.now();
 
         sendAnalytics(
             createWelcomePageEvent('clicked', 'joinButton', {

@@ -136,7 +136,8 @@ function _mapStateToProps(state) {
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
     const tabs = [];
-
+    console.log(SETTINGS_TABS);
+    console.log(showDeviceSettings);
     if (showDeviceSettings) {
         tabs.push({
             name: SETTINGS_TABS.DEVICES,
@@ -162,49 +163,49 @@ function _mapStateToProps(state) {
             submit: submitDeviceSelectionTab
         });
     }
+    // console.log(showProfileSettings);
+    // if (showProfileSettings) {
+    //     tabs.push({
+    //         name: SETTINGS_TABS.PROFILE,
+    //         component: ProfileTab,
+    //         label: 'profile.title',
+    //         props: getProfileTabProps(state),
+    //         styles: 'settings-pane profile-pane',
+    //         submit: submitProfileTab
+    //     });
+    // }
+    // console.log(showCalendarSettings);
+    // if (showCalendarSettings) {
+    //     tabs.push({
+    //         name: SETTINGS_TABS.CALENDAR,
+    //         component: CalendarTab,
+    //         label: 'settings.calendar.title',
+    //         styles: 'settings-pane calendar-pane'
+    //     });
+    // }
 
-    if (showProfileSettings) {
-        tabs.push({
-            name: SETTINGS_TABS.PROFILE,
-            component: ProfileTab,
-            label: 'profile.title',
-            props: getProfileTabProps(state),
-            styles: 'settings-pane profile-pane',
-            submit: submitProfileTab
-        });
-    }
+    // if (showModeratorSettings || showLanguageSettings || showPrejoinSettings) {
+    //     tabs.push({
+    //         name: SETTINGS_TABS.MORE,
+    //         component: MoreTab,
+    //         label: 'settings.more',
+    //         props: moreTabProps,
+    //         propsUpdateFunction: (tabState, newProps) => {
+    //             // Updates tab props, keeping users selection
 
-    if (showCalendarSettings) {
-        tabs.push({
-            name: SETTINGS_TABS.CALENDAR,
-            component: CalendarTab,
-            label: 'settings.calendar.title',
-            styles: 'settings-pane calendar-pane'
-        });
-    }
-
-    if (showModeratorSettings || showLanguageSettings || showPrejoinSettings) {
-        tabs.push({
-            name: SETTINGS_TABS.MORE,
-            component: MoreTab,
-            label: 'settings.more',
-            props: moreTabProps,
-            propsUpdateFunction: (tabState, newProps) => {
-                // Updates tab props, keeping users selection
-
-                return {
-                    ...newProps,
-                    currentLanguage: tabState.currentLanguage,
-                    followMeEnabled: tabState.followMeEnabled,
-                    showPrejoinPage: tabState.showPrejoinPage,
-                    startAudioMuted: tabState.startAudioMuted,
-                    startVideoMuted: tabState.startVideoMuted
-                };
-            },
-            styles: 'settings-pane more-pane',
-            submit: submitMoreTab
-        });
-    }
+    //             return {
+    //                 ...newProps,
+    //                 currentLanguage: tabState.currentLanguage,
+    //                 followMeEnabled: tabState.followMeEnabled,
+    //                 showPrejoinPage: tabState.showPrejoinPage,
+    //                 startAudioMuted: tabState.startAudioMuted,
+    //                 startVideoMuted: tabState.startVideoMuted
+    //             };
+    //         },
+    //         styles: 'settings-pane more-pane',
+    //         submit: submitMoreTab
+    //     });
+    // }
 
     return { _tabs: tabs };
 }
