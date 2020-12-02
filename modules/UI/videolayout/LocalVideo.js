@@ -104,7 +104,7 @@ export default class LocalVideo extends SmallVideo {
         }
 
         this._renderDisplayName({
-            allowEditing: !config.disableProfile,
+            allowEditing: false,
             displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
             elementID: 'localDisplayName',
             participantID: this.id

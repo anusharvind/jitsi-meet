@@ -44,7 +44,9 @@ type Props = {
     /**
      * Externally provided value.
      */
-    value?: string
+    value?: string,
+
+    disabled: Boolean,
 };
 
 type State = {
@@ -123,7 +125,9 @@ export default class InputField extends PureComponent<Props, State> {
                 onKeyDown = { this._onKeyDown }
                 placeholder = { this.props.placeHolder }
                 type = { this.props.type }
-                value = { this.state.value } />
+                value = { this.state.value }
+                disabled = {this.props.disabled}
+                />
         );
     }
 

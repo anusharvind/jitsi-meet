@@ -1,197 +1,1431 @@
-<html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
-  <head>
-    <!--#include virtual="head.html" -->
-    <meta charset="utf-8">
-    <meta http-equiv="content-type" content="text/html;charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2A3A4B">
-    <!--#include virtual="base.html" -->
+<html itemscope="" itemtype="http://schema.org/Product"
+    prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html"
+    class="js-focus-visible" data-js-focus-visible="" data-ember-extension="1">
 
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="stylesheet" href="css/all.css">
-    <link rel="manifest" id="manifest-placeholder">
+    <head>
 
-    <script>
-        // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
-        // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
-        document.querySelector('#manifest-placeholder').setAttribute('href', window.location.origin + '/manifest.json');
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#2A3A4B">
+        <base href="/">
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!JitsiMeetJS.app) {
-                return;
-            }
 
-            JitsiMeetJS.app.renderEntryPoint({
-                Component: JitsiMeetJS.app.entryPoints.APP
-            })
+        <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+        <link rel="stylesheet" href="css/all.css?v=4570">
+        <link rel="manifest" id="manifest-placeholder" href="/manifest.json">
 
-            const isElectron = navigator.userAgent.includes('Electron');
-            const shouldRegisterWorker = !isElectron && 'serviceWorker' in navigator;
+        <script>
+            // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
+            // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
+            document.querySelector('#manifest-placeholder').setAttribute('href',
+                window.location.origin + '/manifest.json');
 
-            if (shouldRegisterWorker) {
-                navigator.serviceWorker
-                    .register(window.location.origin + '/pwa-worker.js')
-                    .then(reg => {
-                        console.log('Service worker registered.', reg);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            }
-        });
-    </script>
-    <script>
-        // IE11 and earlier can be identified via their user agent and be
-        // redirected to a page that is known to have no newer js syntax.
-        if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
-            var roomName = encodeURIComponent(window.location.pathname);
-            window.location.href = "static/recommendedBrowsers.html" + "?room=" + roomName;
-        }
+            document.addEventListener('DOMContentLoaded', () => {
+                if (!JitsiMeetJS.app) {
+                    return;
+                }
 
-        window.indexLoadedTime = window.performance.now();
-        console.log("(TIME) index.html loaded:\t", indexLoadedTime);
-        // XXX the code below listeners for errors and displays an error message
-        // in the document body when any of the required files fails to load.
-        // The intention is to prevent from displaying broken page.
-        var criticalFiles = [
-            "config.js",
-            "utils.js",
-            "do_external_connect.js",
-            "interface_config.js",
-            "logging_config.js",
-            "lib-jitsi-meet.min.js",
-            "app.bundle.min.js",
-            "all.css"
-        ];
-        var loadErrHandler = function(e) {
-            var target = e.target;
-            // Error on <script> and <link>(CSS)
-            // <script> will have .src and <link> .href
-            var fileRef = (target.src ? target.src : target.href);
-            if (("SCRIPT" === target.tagName || "LINK" === target.tagName)
-                && criticalFiles.some(
-                    function(file) { return fileRef.indexOf(file) !== -1 })) {
-                window.onload = function() {
-                    // The whole complex part below implements page reloads with
-                    // "exponential backoff". The retry attempt is passes as
-                    // "rCounter" query parameter
-                    var href = window.location.href;
+                JitsiMeetJS.app.renderEntryPoint({
+                    Component: JitsiMeetJS.app.entryPoints.APP
+                })
 
-                    var retryMatch = href.match(/.+(\?|&)rCounter=(\d+)/);
-                    var retryCountStr = retryMatch ? retryMatch[2] : "0";
-                    var retryCount = Number.parseInt(retryCountStr);
+                const isElectron = navigator.userAgent.includes(
+                    'Electron');
+                const shouldRegisterWorker = !isElectron &&
+                    'serviceWorker' in navigator;
 
-                    if (retryMatch == null) {
-                        var separator = href.indexOf("?") === -1 ? "?" : "&";
-                        var hashIdx = href.indexOf("#");
-
-                        if (hashIdx === -1) {
-                            href += separator + "rCounter=1";
-                        } else {
-                            var hashPart = href.substr(hashIdx);
-
-                            href = href.substr(0, hashIdx)
-                                + separator + "rCounter=1" + hashPart;
-                        }
-                    } else {
-                        var separator = retryMatch[1];
-
-                        href = href.replace(
-                            /(\?|&)rCounter=(\d+)/,
-                            separator + "rCounter=" + (retryCount + 1));
-                    }
-
-                    var delay = Math.pow(2, retryCount) * 2000;
-                    if (isNaN(delay) || delay < 2000 || delay > 60000)
-                        delay = 10000;
-
-                    var showMoreText = "show more";
-                    var showLessText = "show less";
-
-                    document.body.innerHTML
-                        = "<div style='"
-                        + "position: absolute;top: 50%;left: 50%;"
-                        + "text-align: center;"
-                        + "font-size: medium;"
-                        + "font-weight: 400;"
-                        + "transform: translate(-50%, -50%)'>"
-                        + "Uh oh! We couldn't fully download everything we needed :("
-                        + "<br/> "
-                        + "We will try again shortly. In the mean time, check for problems with your Internet connection!"
-                        + "<br/><br/> "
-                        + "<div id='moreInfo' style='"
-                        + "display: none;'>" + "Missing " + fileRef
-                        + "<br/><br/></div>"
-                        + "<a id='showMore' style='"
-                        + "text-decoration: underline;"
-                        + "font-size:small;"
-                        + "cursor: pointer'>" + showMoreText + "</a>"
-                        + "&nbsp;&nbsp;&nbsp;"
-                        + "<a id ='reloadLink' style='"
-                        + "text-decoration: underline;"
-                        + "font-size:small;"
-                        + "'>reload now</a>"
-                        + "</div>";
-
-                    var reloadLink = document.getElementById('reloadLink');
-                    reloadLink.setAttribute('href', href);
-
-                    var showMoreElem = document.getElementById("showMore");
-                    showMoreElem.addEventListener('click', function () {
-                            var moreInfoElem
-                                    = document.getElementById("moreInfo");
-
-                            if (showMoreElem.innerHTML === showMoreText) {
-                                moreInfoElem.setAttribute(
-                                    "style",
-                                    "display: block;"
-                                    + "color:#FF991F;"
-                                    + "font-size:small;"
-                                    + "user-select:text;");
-                                showMoreElem.innerHTML = showLessText;
-                            }
-                            else {
-                                moreInfoElem.setAttribute(
-                                    "style", "display: none;");
-                                showMoreElem.innerHTML = showMoreText;
-                            }
+                if (shouldRegisterWorker) {
+                    navigator.serviceWorker
+                        .register(window.location.origin +
+                            '/pwa-worker.js')
+                        .then(reg => {
+                            console.log(
+                                'Service worker registered.',
+                                reg);
+                        })
+                        .catch(err => {
+                            console.log(err);
                         });
-
-                    window.setTimeout(
-                        function () { window.location.replace(href); }, delay);
-
-                    // Call extra handler if defined.
-                    if (typeof postLoadErrorHandler === "function") {
-                        postLoadErrorHandler(fileRef);
-                    }
-                };
-                window.removeEventListener(
-                    'error', loadErrHandler, true /* capture phase */);
+                }
+            });
+        </script>
+        <script>
+            // IE11 and earlier can be identified via their user agent and be
+            // redirected to a page that is known to have no newer js syntax.
+            if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
+                var roomName = encodeURIComponent(window.location.pathname);
+                window.location.href = "static/recommendedBrowsers.html" +
+                    "?room=" + roomName;
             }
-        };
-        window.addEventListener(
-            'error', loadErrHandler, true /* capture phase type of listener */);
-    </script>
-    <title>Fresh Meet</title>
-    <script>function(){console.log('Loading from Our Server');}</script>
-    <script><!--#include virtual="/config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
-    <!--#include virtual="connection_optimization/connection_optimization.html" -->
-    <script src="libs/do_external_connect.min.js?v=1"></script>
-    <script><!--#include virtual="/interface_config.js" --></script>
-    <script><!--#include virtual="/logging_config.js" --></script>
-    <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
-    <script src="libs/app.bundle.min.js?v=139"></script>
-    <!--#include virtual="title.html" -->
-    <!--#include virtual="plugin.head.html" -->
-    <!--#include virtual="static/welcomePageAdditionalContent.html" -->
-    <!--#include virtual="static/welcomePageAdditionalCard.html" -->
-    <!--#include virtual="static/settingsToolbarAdditionalContent.html" -->
-  </head>
-  <body>
-    <noscript>
-        <div>JavaScript is disabled. </br>For this site to work you have to enable JavaScript.</div>
-    </noscript>
-    <!--#include virtual="body.html" -->
-    <div id="react"></div>
-  </body>
+
+            window.indexLoadedTime = window.performance.now();
+            console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+            // XXX the code below listeners for errors and displays an error message
+            // in the document body when any of the required files fails to load.
+            // The intention is to prevent from displaying broken page.
+            var criticalFiles = [
+                "config.js",
+                "utils.js",
+                "do_external_connect.js",
+                "interface_config.js",
+                "logging_config.js",
+                "lib-jitsi-meet.min.js",
+                "app.bundle.min.js",
+                "all.css?v=4570"
+            ];
+            var loadErrHandler = function (e) {
+                var target = e.target;
+                // Error on <script> and <link>(CSS)
+                // <script> will have .src and <link> .href
+                var fileRef = (target.src ? target.src : target.href);
+                if (("SCRIPT" === target.tagName || "LINK" === target
+                        .tagName) &&
+                    criticalFiles.some(
+                        function (file) {
+                            return fileRef.indexOf(file) !== -1
+                        })) {
+                    window.onload = function () {
+                        // The whole complex part below implements page reloads with
+                        // "exponential backoff". The retry attempt is passes as
+                        // "rCounter" query parameter
+                        var href = window.location.href;
+
+                        var retryMatch = href.match(
+                            /.+(\?|&)rCounter=(\d+)/);
+                        var retryCountStr = retryMatch ? retryMatch[2] :
+                            "0";
+                        var retryCount = Number.parseInt(retryCountStr);
+
+                        if (retryMatch == null) {
+                            var separator = href.indexOf("?") === -1 ?
+                                "?" : "&";
+                            var hashIdx = href.indexOf("#");
+
+                            if (hashIdx === -1) {
+                                href += separator + "rCounter=1";
+                            } else {
+                                var hashPart = href.substr(hashIdx);
+
+                                href = href.substr(0, hashIdx) +
+                                    separator + "rCounter=1" + hashPart;
+                            }
+                        } else {
+                            var separator = retryMatch[1];
+
+                            href = href.replace(
+                                /(\?|&)rCounter=(\d+)/,
+                                separator + "rCounter=" + (
+                                    retryCount + 1));
+                        }
+
+                        var delay = Math.pow(2, retryCount) * 2000;
+                        if (isNaN(delay) || delay < 2000 || delay >
+                            60000)
+                            delay = 10000;
+
+                        var showMoreText = "show more";
+                        var showLessText = "show less";
+
+                        document.body.innerHTML = "<div style='" +
+                            "position: absolute;top: 50%;left: 50%;" +
+                            "text-align: center;" +
+                            "font-size: medium;" +
+                            "font-weight: 400;" +
+                            "transform: translate(-50%, -50%)'>" +
+                            "Uh oh! We couldn't fully download everything we needed :(" +
+                            "<br/> " +
+                            "We will try again shortly. In the mean time, check for problems with your Internet connection!" +
+                            "<br/><br/> " +
+                            "<div id='moreInfo' style='" +
+                            "display: none;'>" + "Missing " + fileRef +
+                            "<br/><br/></div>" +
+                            "<a id='showMore' style='" +
+                            "text-decoration: underline;" +
+                            "font-size:small;" +
+                            "cursor: pointer'>" + showMoreText +
+                            "</a>" +
+                            "&nbsp;&nbsp;&nbsp;" +
+                            "<a id ='reloadLink' style='" +
+                            "text-decoration: underline;" +
+                            "font-size:small;" +
+                            "'>reload now</a>" +
+                            "</div>";
+
+                        var reloadLink = document.getElementById(
+                            'reloadLink');
+                        reloadLink.setAttribute('href', href);
+
+                        var showMoreElem = document.getElementById(
+                            "showMore");
+                        showMoreElem.addEventListener('click',
+                            function () {
+                                var moreInfoElem = document
+                                    .getElementById("moreInfo");
+
+                                if (showMoreElem.innerHTML ===
+                                    showMoreText) {
+                                    moreInfoElem.setAttribute(
+                                        "style",
+                                        "display: block;" +
+                                        "color:#FF991F;" +
+                                        "font-size:small;" +
+                                        "user-select:text;");
+                                    showMoreElem.innerHTML =
+                                        showLessText;
+                                } else {
+                                    moreInfoElem.setAttribute(
+                                        "style",
+                                        "display: none;");
+                                    showMoreElem.innerHTML =
+                                        showMoreText;
+                                }
+                            });
+
+                        window.setTimeout(
+                            function () {
+                                window.location.replace(href);
+                            }, delay);
+
+                        // Call extra handler if defined.
+                        if (typeof postLoadErrorHandler ===
+                            "function") {
+                            postLoadErrorHandler(fileRef);
+                        }
+                    };
+                    window.removeEventListener(
+                        'error', loadErrHandler,
+                        true /* capture phase */ );
+                }
+            };
+            window.addEventListener(
+                'error', loadErrHandler,
+                true /* capture phase type of listener */ );
+        </script>
+        <script>
+            var subdomain = "";
+            if (subdomain) {
+                subdomain = subdomain.substr(0, subdomain.length - 1).split('.')
+                    .join('_').toLowerCase() + '.';
+            }
+            var config = {
+                hosts: {
+                    domain: 'alpha.jitsi.net',
+
+                    muc: 'conference.' + subdomain +
+                    'alpha.jitsi.net', // FIXME: use XEP-0030
+                    focus: 'focus.alpha.jitsi.net',
+                },
+                disableSimulcast: false,
+                enableRemb: false,
+                enableTcc: true,
+                resolution: 720,
+                constraints: {
+                    video: {
+                        aspectRatio: 16 / 9,
+                        height: {
+                            ideal: 720,
+                            max: 720,
+                            min: 180
+                        },
+                        width: {
+                            ideal: 1280,
+                            max: 1280,
+                            min: 320
+                        }
+                    }
+                },
+                externalConnectUrl: '//alpha.jitsi.net/http-pre-bind',
+                analytics: {
+                    // amplitudeAPPKey: "2719ff8976e947a6cc804bd1bb9c9cc6",
+                    // whiteListedEvents: ['rtcstats.trace.onclose',
+                    //     'conference.joined', 'page.reload.scheduled',
+                    //     'rejoined', 'transport.stats',
+                    //     'rtcstats.trace.onclose'
+                    // ],
+                    // rtcstatsEnabled: true,
+                    // rtcstatsEndpoint: "wss://rtcstats-server-pilot.jitsi.net/",
+                    // rtcstatsPolIInterval: 1000
+                },
+                p2pStunServers: [{
+                        urls: "stun:stun.l.google.com:19302"
+                    },
+                    {
+                        urls: "stun:stun1.l.google.com:19302"
+                    },
+                    {
+                        urls: "stun:stun2.l.google.com:19302"
+                    }
+                ],
+                //enableP2P: false, // flag to control P2P connections
+                // New P2P options
+                p2p: {
+                    enabled: false,
+                    preferH264: true,
+                    disableH264: true,
+                    useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server for the P2P connection
+                    stunServers: [{
+                            urls: "stun:stun.l.google.com:19302"
+                        },
+                        {
+                            urls: "stun:stun1.l.google.com:19302"
+                        },
+                        {
+                            urls: "stun:stun2.l.google.com:19302"
+                        }
+                    ]
+                },
+                useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server for the JVB connection
+                useIPv6: false, // ipv6 support. use at your own risk
+                useNicks: false,
+                bosh: '//alpha.jitsi.net/http-bind', // FIXME: use xep-0156 for that
+
+                //etherpad_base: 'https://alpha.jitsi.net/etherpad/p/',
+                clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
+                //deprecated desktop sharing settings, included only because older version of jitsi-meet require them
+                desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
+                chromeExtensionId: 'pgplkhlodppdcflanmijbnpgpjkegfgc', // Id of desktop streamer Chrome extension
+                desktopSharingSources: ['screen', 'window'],
+                //new desktop sharing settings
+                desktopSharingChromeExtId: 'pgplkhlodppdcflanmijbnpgpjkegfgc', // Id of desktop streamer Chrome extension
+                desktopSharingChromeDisabled: false,
+                desktopSharingChromeSources: ['screen', 'window', 'tab'],
+                desktopSharingChromeMinExtVersion: '0.1.3', // Required version of Chrome extension
+                desktopSharingFirefoxExtId: "jidesha@alpha.jitsi.net",
+                desktopSharingFirefoxDisabled: true,
+                desktopSharingFirefoxMaxVersionExtRequired: '0',
+                desktopSharingFirefoxExtensionURL: "",
+                useRoomAsSharedDocumentName: false,
+                enableLipSync: false, // Disables lip-sync everywhere.
+                disableRtx: false, // Enables RTX everywhere
+                enableRtpStats: false, // Enables RTP stats processing
+                enableStatsID: true,
+                openBridgeChannel: 'websocket', // One of true, 'datachannel', or 'websocket'
+                //openBridgeChannel: 'datachannel', // One of true, 'datachannel', or 'websocket'
+                channelLastN: -
+                1, // The default value of the channel attribute last-n.
+                minHDHeight: 540,
+                startBitrate: "800",
+                disableAudioLevels: false,
+                useRtcpMux: true,
+                useBundle: true,
+                disableSuspendVideo: true,
+                stereo: true,
+                forceJVB121Ratio: -1,
+                enableTalkWhileMuted: true,
+
+                hiddenDomain: 'recorder.alpha.jitsi.net',
+                transcribingEnabled: false,
+                enableRecording: true,
+                liveStreamingEnabled: true,
+                fileRecordingsEnabled: false,
+                fileRecordingsServiceEnabled: false,
+                fileRecordingsServiceSharingEnabled: false,
+                requireDisplayName: false,
+                recordingType: 'jibri',
+                enableWelcomePage: true,
+                isBrand: false,
+                logStats: false,
+                // To enable sending statistics to callstats.io you should provide Applicaiton ID and Secret.
+                callStatsID: "294674397", //Application ID for callstats.io API
+                callStatsSecret: "9IJJTtOdheZs:MHov7tz0Gc3h/6NYXiNVCqA1tpTmKPH0AdXTYtAKVRY=", //Secret for callstats.io API
+                dialInNumbersUrl: 'https://api.jitsi.net/phoneNumberList',
+                dialInConfCodeUrl: 'https://api.jitsi.net/conferenceMapper',
+
+                dialOutCodesUrl: 'https://api.jitsi.net/countrycodes',
+                dialOutAuthUrl: 'https://api.jitsi.net/authorizephone',
+                peopleSearchUrl: 'https://api.jitsi.net/directorySearch',
+                inviteServiceUrl: 'https://api.jitsi.net/conferenceInvite',
+                inviteServiceCallFlowsUrl: 'https://api.jitsi.net/conferenceinvitecallflows',
+                peopleSearchQueryTypes: ['user', 'conferenceRooms'],
+                startAudioMuted: 9,
+                startVideoMuted: 9,
+                prejoinPageEnabled: true,
+                enableUserRolesBasedOnToken: false,
+                hepopAnalyticsUrl: "",
+                hepopAnalyticsEvent: {
+                    product: "lib-jitsi-meet",
+                    subproduct: "alpha",
+                    name: "jitsi.page.load.failed",
+                    action: "page.load.failed",
+                    actionSubject: "page.load",
+                    type: "page.load.failed",
+                    source: "page.load",
+                    attributes: {
+                        type: "operational",
+                        source: 'page.load'
+                    },
+                    server: "alpha.jitsi.net"
+                },
+                deploymentInfo: {
+                    environment: 'alpha',
+                    envType: 'dev',
+                    releaseNumber: '',
+                    shard: 'all',
+                    region: 'us-west-2',
+                    userRegion: '',
+                    crossRegion: (!'' || 'us-west-2' === 'default_region') ?
+                        0 : 1
+                },
+                rttMonitor: {
+                    enabled: false,
+                    initialDelay: 30000,
+                    getStatsInterval: 10000,
+                    analyticsInterval: 60000,
+                    stunServers: {
+                        "ap-se-1": "all-ap-se-1-turn.jitsi.net:443",
+                        "ap-se-2": "all-ap-se-2-turn.jitsi.net:443",
+                        "eu-central-1": "all-eu-central-1-turn.jitsi.net:443",
+                        "eu-west-1": "all-eu-west-1-turn.jitsi.net:443",
+                        "us-east-1": "all-us-east-1-turn.jitsi.net:443",
+                        "us-west-2": "all-us-west-2-turn.jitsi.net:443"
+                    }
+                },
+                abTesting: {},
+                testing: {
+                    octo: {
+                        probability: 0
+                    }
+                }
+            };
+        </script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+        <script src="libs/external_connect.js?v=1"></script>
+
+        <script src="libs/do_external_connect.min.js?v=1"></script>
+        <script>
+            /* eslint-disable no-unused-vars, no-var, max-len */
+            /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
+
+            var interfaceConfig = {
+                APP_NAME: 'Fresh Meet',
+                AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
+                AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+
+                /**
+                 * A UX mode where the last screen share participant is automatically
+                 * pinned. Valid values are the string "remote-only" so remote participants
+                 * get pinned but not local, otherwise any truthy value for all participants,
+                 * and any falsy value to disable the feature.
+                 *
+                 * Note: this mode is experimental and subject to breakage.
+                 */
+                AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
+                BRAND_WATERMARK_LINK: '',
+
+                CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
+                /**
+                 * Whether the connection indicator icon should hide itself based on
+                 * connection strength. If true, the connection indicator will remain
+                 * displayed while the participant has a weak connection and will hide
+                 * itself after the CONNECTION_INDICATOR_HIDE_TIMEOUT when the connection is
+                 * strong.
+                 *
+                 * @type {boolean}
+                 */
+                CONNECTION_INDICATOR_AUTO_HIDE_ENABLED: true,
+
+                /**
+                 * How long the connection indicator should remain displayed before hiding.
+                 * Used in conjunction with CONNECTION_INDICATOR_AUTOHIDE_ENABLED.
+                 *
+                 * @type {number}
+                 */
+                CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000,
+
+                /**
+                 * If true, hides the connection indicators completely.
+                 *
+                 * @type {boolean}
+                 */
+                CONNECTION_INDICATOR_DISABLED: false,
+
+                DEFAULT_BACKGROUND: '#474747',
+                DEFAULT_LOCAL_DISPLAY_NAME: 'me',
+                DEFAULT_LOGO_URL: 'images/watermark.svg',
+                DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+                DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
+
+                DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
+
+                DISABLE_FOCUS_INDICATOR: false,
+
+                /**
+                 * If true, notifications regarding joining/leaving are no longer displayed.
+                 */
+                DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+
+                /**
+                 * If true, presence status: busy, calling, connected etc. is not displayed.
+                 */
+                DISABLE_PRESENCE_STATUS: false,
+
+                /**
+                 * Whether the ringing sound in the call/ring overlay is disabled. If
+                 * {@code undefined}, defaults to {@code false}.
+                 *
+                 * @type {boolean}
+                 */
+                DISABLE_RINGING: false,
+
+                /**
+                 * Whether the speech to text transcription subtitles panel is disabled.
+                 * If {@code undefined}, defaults to {@code false}.
+                 *
+                 * @type {boolean}
+                 */
+                DISABLE_TRANSCRIPTION_SUBTITLES: false,
+
+                /**
+                 * Whether or not the blurred video background for large video should be
+                 * displayed on browsers that can support it.
+                 */
+                DISABLE_VIDEO_BACKGROUND: false,
+
+                DISPLAY_WELCOME_FOOTER: true,
+                DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
+                DISPLAY_WELCOME_PAGE_CONTENT: false,
+                DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+
+                ENABLE_DIAL_OUT: true,
+
+                ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
+
+                FILM_STRIP_MAX_HEIGHT: 120,
+
+                GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+
+                /**
+                 * Hide the logo on the deep linking pages.
+                 */
+                HIDE_DEEP_LINKING_LOGO: false,
+
+                /**
+                 * Hide the invite prompt in the header when alone in the meeting.
+                 */
+                HIDE_INVITE_MORE_HEADER: false,
+
+                INITIAL_TOOLBAR_TIMEOUT: 20000,
+                JITSI_WATERMARK_LINK: 'https://jitsi.org',
+
+                LANG_DETECTION: true, // Allow i18n to detect the system language
+                LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
+                LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
+
+                /**
+                 * Maximum coefficient of the ratio of the large video to the visible area
+                 * after the large video is scaled to fit the window.
+                 *
+                 * @type {number}
+                 */
+                MAXIMUM_ZOOMING_COEFFICIENT: 1.3,
+
+                /**
+                 * Whether the mobile app Jitsi Meet is to be promoted to participants
+                 * attempting to join a conference in a mobile Web browser. If
+                 * {@code undefined}, defaults to {@code true}.
+                 *
+                 * @type {boolean}
+                 */
+                MOBILE_APP_PROMO: true,
+
+                /**
+                 * Specify custom URL for downloading android mobile app.
+                 */
+                MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+
+                /**
+                 * Specify custom URL for downloading f droid app.
+                 */
+                MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
+
+                /**
+                 * Specify URL for downloading ios mobile app.
+                 */
+                MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+
+                NATIVE_APP_NAME: 'Fresh Meet',
+
+                // Names of browsers which should show a warning stating the current browser
+                // has a suboptimal experience. Browsers which are not listed as optimal or
+                // unsupported are considered suboptimal. Valid values are:
+                // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
+                OPTIMAL_BROWSERS: ['chrome', 'chromium', 'firefox', 'nwjs',
+                    'electron', 'safari'
+                ],
+
+                POLICY_LOGO: null,
+                PROVIDER_NAME: 'Jitsi',
+
+                /**
+                 * If true, will display recent list
+                 *
+                 * @type {boolean}
+                 */
+                RECENT_LIST_ENABLED: true,
+                REMOTE_THUMBNAIL_RATIO: 1, // 1:1
+
+                SETTINGS_SECTIONS: ['devices', 'language', 'moderator',
+                    'profile', 'calendar'
+                ],
+                SHOW_BRAND_WATERMARK: false,
+
+                /**
+                 * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
+                 * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
+                 * being already installed is done before rendering.
+                 */
+                SHOW_CHROME_EXTENSION_BANNER: false,
+
+                SHOW_DEEP_LINKING_IMAGE: false,
+                SHOW_JITSI_WATERMARK: true,
+                SHOW_POWERED_BY: false,
+                SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+
+                /*
+                 * If indicated some of the error dialogs may point to the support URL for
+                 * help.
+                 */
+                SUPPORT_URL: 'https://community.jitsi.org/',
+
+                TOOLBAR_ALWAYS_VISIBLE: false,
+
+                /**
+                 * The name of the toolbar buttons to display in the toolbar, including the
+                 * "More actions" menu. If present, the button will display. Exceptions are
+                 * "livestreaming" and "recording" which also require being a moderator and
+                 * some values in config.js to be enabled. Also, the "profile" button will
+                 * not display for users with a JWT.
+                 * Notes:
+                 * - it's impossible to choose which buttons go in the "More actions" menu
+                 * - it's impossible to control the placement of buttons
+                 * - 'desktop' controls the "Share your screen" button
+                 */
+                TOOLBAR_BUTTONS: [
+                    'microphone', 'camera', 'closedcaptions', 'desktop',
+                    'fullscreen',
+                    'fodeviceselection', 'hangup', 'chat', 'recording',
+                    'etherpad', 'settings', 'raisehand',
+                    'videoquality', 'filmstrip', 'invite',
+                    'tileview', 'videobackgroundblur', 'download',
+                    'help',
+                ],
+
+                TOOLBAR_TIMEOUT: 4000,
+
+                // Browsers, in addition to those which do not fully support WebRTC, that
+                // are not supported and should show the unsupported browser page.
+                UNSUPPORTED_BROWSERS: [],
+
+                /**
+                 * Whether to show thumbnails in filmstrip as a column instead of as a row.
+                 */
+                VERTICAL_FILMSTRIP: true,
+
+                // Determines how the video would fit the screen. 'both' would fit the whole
+                // screen, 'height' would fit the original video height to the height of the
+                // screen, 'width' would fit the original video width to the width of the
+                // screen respecting ratio.
+                VIDEO_LAYOUT_FIT: 'both',
+
+                /**
+                 * If true, hides the video quality label indicating the resolution status
+                 * of the current large video.
+                 *
+                 * @type {boolean}
+                 */
+                VIDEO_QUALITY_LABEL_DISABLED: false,
+
+                /**
+                 * How many columns the tile view can expand to. The respected range is
+                 * between 1 and 5.
+                 */
+                // TILE_VIEW_MAX_COLUMNS: 5,
+
+                /**
+                 * Specify Firebase dynamic link properties for the mobile apps.
+                 */
+                // MOBILE_DYNAMIC_LINK: {
+                //    APN: 'org.jitsi.meet',
+                //    APP_CODE: 'w2atb',
+                //    CUSTOM_DOMAIN: undefined,
+                //    IBI: 'com.atlassian.JitsiMeet.ios',
+                //    ISI: '1165103905'
+                // },
+
+                /**
+                 * Specify mobile app scheme for opening the app from the mobile browser.
+                 */
+                // APP_SCHEME: 'org.jitsi.meet',
+
+                /**
+                 * Specify the Android app package name.
+                 */
+                // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
+
+                /**
+                 * Override the behavior of some notifications to remain displayed until
+                 * explicitly dismissed through a user action. The value is how long, in
+                 * milliseconds, those notifications should remain displayed.
+                 */
+                // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
+
+                // List of undocumented settings
+                /**
+                 INDICATOR_FONT_SIZES
+                 PHONE_NUMBER_REGEX
+                */
+
+                // Allow all above example options to include a trailing comma and
+                // prevent fear when commenting out the last value.
+                // eslint-disable-next-line sort-keys
+                makeJsonParserHappy: 'even if last key had a trailing comma',
+
+                // No configuration value should follow this line.
+
+                FS_ACCOUNT_DOMAIN: 'https://praba.freshservice.com'
+            };
+
+            /* eslint-enable no-unused-vars, no-var, max-len */
+        </script>
+        <script>
+            /* eslint-disable no-unused-vars, no-var */
+
+            // Logging configuration
+            var loggingConfig = {
+                // default log level for the app and lib-jitsi-meet
+                defaultLogLevel: 'trace',
+
+                // Option to disable LogCollector (which stores the logs on CallStats)
+                // disableLogCollector: true,
+
+                // The following are too verbose in their logging with the
+                // {@link #defaultLogLevel}:
+                'modules/RTC/TraceablePeerConnection.js': 'info',
+                'modules/statistics/CallStats.js': 'info',
+                'modules/xmpp/strophe.util.js': 'log'
+            };
+
+            /* eslint-enable no-unused-vars, no-var */
+
+            // XXX Web/React server-includes logging_config.js into index.html.
+            // Mobile/react-native requires it in react/features/base/logging. For the
+            // purposes of the latter, (try to) export loggingConfig. The following
+            // detection of a module system is inspired by webpack.
+            typeof module === 'object' &&
+                typeof exports === 'object' &&
+                (module.exports = loggingConfig);
+        </script>
+        <script src="libs/lib-jitsi-meet.min.js?v=4570"></script>
+        <script src="libs/app.bundle.min.js?v=4570"></script>
+        <style data-styled-components="">
+            /* sc-component-id: sc-bdVaJa */
+
+            /* sc-component-id: sc-bwzfXH */
+
+            /* sc-component-id: sc-htpNat */
+
+            /* sc-component-id: sc-bxivhb */
+
+            /* sc-component-id: sc-ifAKCX */
+
+            /* sc-component-id: sc-EHOje */
+
+            /* sc-component-id: sc-bZQynM */
+
+            /* sc-component-id: sc-gzVnrw */
+
+            /* sc-component-id: sc-htoDjs */
+
+            /* sc-component-id: sc-dnqmqq */
+
+            /* sc-component-id: sc-iwsKbI */
+
+            /* sc-component-id: sc-gZMcBi */
+
+            /* sc-component-id: sc-gqjmRU */
+
+            /* sc-component-id: sc-VigVT */
+
+            /* sc-component-id: sc-jTzLTM */
+
+            /* sc-component-id: sc-fjdhpX */
+
+            /* sc-component-id: sc-keyframes-cbfRuT */
+            @-webkit-keyframes cbfRuT {
+                from {
+                    opacity: 0;
+                    -webkit-transform: translate(-200px, 0);
+                    -ms-transform: translate(-200px, 0);
+                    transform: translate(-200px, 0);
+                }
+
+                to {
+                    opacity: 1;
+                    -webkit-transform: translate(0, 0);
+                    -ms-transform: translate(0, 0);
+                    transform: translate(0, 0);
+                }
+            }
+
+            @keyframes cbfRuT {
+                from {
+                    opacity: 0;
+                    -webkit-transform: translate(-200px, 0);
+                    -ms-transform: translate(-200px, 0);
+                    transform: translate(-200px, 0);
+                }
+
+                to {
+                    opacity: 1;
+                    -webkit-transform: translate(0, 0);
+                    -ms-transform: translate(0, 0);
+                    transform: translate(0, 0);
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-liBBhk */
+            @-webkit-keyframes liBBhk {
+                from {
+                    opacity: 1;
+                    -webkit-transform: translate(0, 0);
+                    -ms-transform: translate(0, 0);
+                    transform: translate(0, 0);
+                }
+
+                to {
+                    opacity: 0;
+                    -webkit-transform: translate(-200px, 0);
+                    -ms-transform: translate(-200px, 0);
+                    transform: translate(-200px, 0);
+                }
+            }
+
+            @keyframes liBBhk {
+                from {
+                    opacity: 1;
+                    -webkit-transform: translate(0, 0);
+                    -ms-transform: translate(0, 0);
+                    transform: translate(0, 0);
+                }
+
+                to {
+                    opacity: 0;
+                    -webkit-transform: translate(-200px, 0);
+                    -ms-transform: translate(-200px, 0);
+                    transform: translate(-200px, 0);
+                }
+            }
+
+            /* sc-component-id: sc-jzJRlG */
+
+            /* sc-component-id: sc-cSHVUG */
+
+            /* sc-component-id: sc-kAzzGY */
+
+            /* sc-component-id: sc-chPdSV */
+
+            /* sc-component-id: AtlaskitThemeProvider__LegacyReset-sc-431dkp-0 */
+            .AtlaskitThemeProvider__LegacyReset-sc-431dkp-0 {}
+
+            .tOoji {
+                background-color: #1B2638;
+                color: #B8C7E0;
+            }
+
+            .tOoji a {
+                color: #4C9AFF;
+            }
+
+            .tOoji a:hover {
+                color: #2684FF;
+            }
+
+            .tOoji a:active {
+                color: #4C9AFF;
+            }
+
+            .tOoji a:focus {
+                outline-color: #2684FF;
+            }
+
+            .tOoji h1 {
+                color: #B8C7E0;
+            }
+
+            .tOoji h2 {
+                color: #B8C7E0;
+            }
+
+            .tOoji h3 {
+                color: #B8C7E0;
+            }
+
+            .tOoji h4 {
+                color: #B8C7E0;
+            }
+
+            .tOoji h5 {
+                color: #B8C7E0;
+            }
+
+            .tOoji h6 {
+                color: #8C9CB8;
+            }
+
+            .tOoji small {
+                color: #8C9CB8;
+            }
+
+            /* sc-component-id: Reset__Div-sc-15i6ali-0 */
+
+            /* sc-component-id: Icon__IconWrapper-dyhwwi-0 */
+
+            /* sc-component-id: styled__TooltipPrimitive-fadon5-0 */
+
+            /* sc-component-id: styled__Tooltip-fadon5-1 */
+
+            /* sc-component-id: styled__Target-fadon5-2 */
+
+            /* sc-component-id: sc-keyframes-bZGgwh */
+            @-webkit-keyframes bZGgwh {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 0;
+                }
+            }
+
+            @keyframes bZGgwh {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 0;
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-cZJnvt */
+            @-webkit-keyframes cZJnvt {
+                from {
+                    -webkit-transform: rotate(50deg);
+                    -ms-transform: rotate(50deg);
+                    transform: rotate(50deg);
+                }
+
+                to {
+                    -webkit-transform: rotate(230deg);
+                    -ms-transform: rotate(230deg);
+                    transform: rotate(230deg);
+                }
+            }
+
+            @keyframes cZJnvt {
+                from {
+                    -webkit-transform: rotate(50deg);
+                    -ms-transform: rotate(50deg);
+                    transform: rotate(50deg);
+                }
+
+                to {
+                    -webkit-transform: rotate(230deg);
+                    -ms-transform: rotate(230deg);
+                    transform: rotate(230deg);
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-iLtbJJ */
+            @-webkit-keyframes iLtbJJ {
+                from {
+                    -webkit-transform: rotate(230deg);
+                    -ms-transform: rotate(230deg);
+                    transform: rotate(230deg);
+                }
+
+                to {
+                    -webkit-transform: rotate(510deg);
+                    -ms-transform: rotate(510deg);
+                    transform: rotate(510deg);
+                }
+            }
+
+            @keyframes iLtbJJ {
+                from {
+                    -webkit-transform: rotate(230deg);
+                    -ms-transform: rotate(230deg);
+                    transform: rotate(230deg);
+                }
+
+                to {
+                    -webkit-transform: rotate(510deg);
+                    -ms-transform: rotate(510deg);
+                    transform: rotate(510deg);
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-hSsjZP */
+            @-webkit-keyframes hSsjZP {
+                from {
+                    opacity: 1;
+                }
+
+                to {
+                    opacity: 0;
+                }
+            }
+
+            @keyframes hSsjZP {
+                from {
+                    opacity: 1;
+                }
+
+                to {
+                    opacity: 0;
+                }
+            }
+
+            /* sc-component-id: styledContainer__Container-sc-1qs8wxp-0 */
+
+            /* sc-component-id: sc-keyframes-ibwhYF */
+            @-webkit-keyframes ibwhYF {
+                to {
+                    -webkit-transform: rotate(360deg);
+                    -ms-transform: rotate(360deg);
+                    transform: rotate(360deg);
+                }
+            }
+
+            @keyframes ibwhYF {
+                to {
+                    -webkit-transform: rotate(360deg);
+                    -ms-transform: rotate(360deg);
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-eMLfYp */
+            @-webkit-keyframes eMLfYp {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes eMLfYp {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-eUeRWO */
+            @-webkit-keyframes eUeRWO {
+                from {
+                    stroke-dashoffset: 43.982297150257104px;
+                }
+
+                to {
+                    stroke-dashoffset: 35.18583772020568px;
+                }
+            }
+
+            @keyframes eUeRWO {
+                from {
+                    stroke-dashoffset: 43.982297150257104px;
+                }
+
+                to {
+                    stroke-dashoffset: 35.18583772020568px;
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-jcVgLC */
+            @-webkit-keyframes jcVgLC {
+                from {
+                    stroke-dashoffset: 69.11503837897544px;
+                }
+
+                to {
+                    stroke-dashoffset: 55.29203070318036px;
+                }
+            }
+
+            @keyframes jcVgLC {
+                from {
+                    stroke-dashoffset: 69.11503837897544px;
+                }
+
+                to {
+                    stroke-dashoffset: 55.29203070318036px;
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-korNWI */
+            @-webkit-keyframes korNWI {
+                from {
+                    stroke-dashoffset: 135.0884841043611px;
+                }
+
+                to {
+                    stroke-dashoffset: 108.07078728348888px;
+                }
+            }
+
+            @keyframes korNWI {
+                from {
+                    stroke-dashoffset: 135.0884841043611px;
+                }
+
+                to {
+                    stroke-dashoffset: 108.07078728348888px;
+                }
+            }
+
+            /* sc-component-id: sc-keyframes-gvARzl */
+            @-webkit-keyframes gvARzl {
+                from {
+                    stroke-dashoffset: 270.1769682087222px;
+                }
+
+                to {
+                    stroke-dashoffset: 216.14157456697777px;
+                }
+            }
+
+            @keyframes gvARzl {
+                from {
+                    stroke-dashoffset: 270.1769682087222px;
+                }
+
+                to {
+                    stroke-dashoffset: 216.14157456697777px;
+                }
+            }
+
+            /* sc-component-id: styledSvg__Svg-y2l69q-0 */
+        </style>
+        <style data-styled-components="">
+            /* sc-component-id: Spinner__Outer-sc-1ejgacn-0 */
+
+            /* sc-component-id: sc-kgoBCf */
+
+            /* sc-component-id: sc-kGXeez */
+
+            /* sc-component-id: sc-kpOJdX */
+
+            /* sc-component-id: sc-dxgOiQ */
+
+            /* sc-component-id: sc-ckVGcZ */
+
+            /* sc-component-id: sc-jKJlTe */
+
+            /* sc-component-id: sc-eNQAEJ */
+
+            /* sc-component-id: sc-hMqMXs */
+
+            /* sc-component-id: sc-kEYyzF */
+
+            /* sc-component-id: ScrollBlock__Blanket-sc-1xiww8k-0 */
+
+            /* sc-component-id: styledContentContainer-p0j3f7-0 */
+
+            /* sc-component-id: Layer__FixedTarget-qunuuz-0 */
+
+            /* sc-component-id: Droplist-sc-1z05y4v-0 */
+
+            /* sc-component-id: Droplist__Content-sc-1z05y4v-1 */
+
+            /* sc-component-id: Droplist__SpinnerContainer-sc-1z05y4v-2 */
+
+            /* sc-component-id: Droplist__Trigger-sc-1z05y4v-3 */
+
+            /* sc-component-id: ItemParts__InputWrapper-sc-14xek3m-0 */
+
+            /* sc-component-id: ItemParts__BeforeAfterBase-sc-14xek3m-1 */
+
+            /* sc-component-id: ItemParts__Before-sc-14xek3m-2 */
+
+            /* sc-component-id: ItemParts__After-sc-14xek3m-3 */
+
+            /* sc-component-id: ItemParts__ContentWrapper-sc-14xek3m-4 */
+
+            /* sc-component-id: ItemParts__Content-sc-14xek3m-5 */
+
+            /* sc-component-id: ItemParts__Description-sc-14xek3m-6 */
+
+            /* sc-component-id: ItemGroup__GroupTitle-ofbfv9-0 */
+
+            /* sc-component-id: ItemGroup__GroupTitleAfter-ofbfv9-1 */
+
+            /* sc-component-id: ItemGroup__GroupTitleText-ofbfv9-2 */
+
+            /* sc-component-id: Item__Anchor-aiqnor-0 */
+
+            /* sc-component-id: Item__Span-aiqnor-1 */
+
+            /* sc-component-id: Item__InputWrapper-aiqnor-2 */
+
+            /* sc-component-id: Item__Before-aiqnor-3 */
+
+            /* sc-component-id: Item__After-aiqnor-4 */
+
+            /* sc-component-id: Item__ContentWrapper-aiqnor-5 */
+
+            /* sc-component-id: Item__Content-aiqnor-6 */
+
+            /* sc-component-id: Item__Description-aiqnor-7 */
+
+            /* sc-component-id: Item__SecondaryText-aiqnor-8 */
+
+            /* sc-component-id: Group-sc-1q26u8b-0 */
+
+            /* sc-component-id: Group__Heading-sc-1q26u8b-1 */
+
+            /* sc-component-id: Group__HeadingAfter-sc-1q26u8b-2 */
+
+            /* sc-component-id: Group__HeadingText-sc-1q26u8b-3 */
+        </style>
+        <style data-styled-components="">
+            /* sc-component-id: styled__Container-sc-1v7azd6-0 */
+
+            /* sc-component-id: Content__ChildWrapper-ve26fj-0 */
+
+            /* sc-component-id: Content-ve26fj-1 */
+
+            /* sc-component-id: Content__ContentWrapper-ve26fj-2 */
+
+            /* sc-component-id: ValidationElement__WarningIcon-sc-1fk9yms-0 */
+
+            /* sc-component-id: ValidationElement__SpinnerParent-sc-1fk9yms-1 */
+
+            /* sc-component-id: Label__LabelWrapper-sc-17towfw-0 */
+
+            /* sc-component-id: Label__LabelInner-sc-17towfw-1 */
+
+            /* sc-component-id: Label__RequiredIndicator-sc-17towfw-2 */
+
+            /* sc-component-id: Stateless__Input-wsqt66-0 */
+
+            /* sc-component-id: Stateless__SelectWrapper-wsqt66-1 */
+
+            /* sc-component-id: styled__Container-sc-10k86ql-0 */
+
+            /* sc-component-id: styled__Span-sc-19s9he1-0 */
+
+            /* sc-component-id: styled__Text-sc-17jb35i-0 */
+
+            /* sc-component-id: styled__Link-sc-17jb35i-1 */
+
+            /* sc-component-id: styled__Button-sc-1cs6xoa-0 */
+
+            /* sc-component-id: styledBefore-p1bbkq-0 */
+
+            /* sc-component-id: sc-keyframes-btRcgO */
+            @-webkit-keyframes btRcgO {
+                0% {
+                    -webkit-animation-timing-function: cubic-bezier(0.23830050393398, 0, 0.25586732616931, 0.79011192334632);
+                    animation-timing-function: cubic-bezier(0.23830050393398, 0, 0.25586732616931, 0.79011192334632);
+                    max-width: 200px;
+                }
+
+                20% {
+                    -webkit-animation-timing-function: cubic-bezier(0.21787238302442, 0.98324004924648, 0.58694150667646, 1);
+                    animation-timing-function: cubic-bezier(0.21787238302442, 0.98324004924648, 0.58694150667646, 1);
+                    max-width: 160px;
+                }
+
+                100% {
+                    max-width: 0;
+                }
+            }
+
+            @keyframes btRcgO {
+                0% {
+                    -webkit-animation-timing-function: cubic-bezier(0.23830050393398, 0, 0.25586732616931, 0.79011192334632);
+                    animation-timing-function: cubic-bezier(0.23830050393398, 0, 0.25586732616931, 0.79011192334632);
+                    max-width: 200px;
+                }
+
+                20% {
+                    -webkit-animation-timing-function: cubic-bezier(0.21787238302442, 0.98324004924648, 0.58694150667646, 1);
+                    animation-timing-function: cubic-bezier(0.21787238302442, 0.98324004924648, 0.58694150667646, 1);
+                    max-width: 160px;
+                }
+
+                100% {
+                    max-width: 0;
+                }
+            }
+
+            /* sc-component-id: styledContainer-sc-1dgacol-0 */
+
+            /* sc-component-id: Trigger__Content-p117u5-0 */
+
+            /* sc-component-id: Trigger__Expand-p117u5-1 */
+
+            /* sc-component-id: Trigger__Input-p117u5-2 */
+
+            /* sc-component-id: Trigger__TriggerDiv-p117u5-3 */
+
+            /* sc-component-id: Footer__FooterDiv-sc-1xuos4y-0 */
+
+            /* sc-component-id: NoMatch__NoMatches-sc-1au7ofu-0 */
+
+            /* sc-component-id: InitialLoading-vq33zx-0 */
+
+            /* sc-component-id: GroupsContainer-sc-1dbou9n-0 */
+
+            /* sc-component-id: Handle-n2edb7-0 */
+
+            /* sc-component-id: IconWrapper-sc-1y3jy9j-0 */
+
+            /* sc-component-id: Inner-sc-15bw73o-0 */
+
+            /* sc-component-id: Input-sc-1ovlrjp-0 */
+
+            /* sc-component-id: Label-ejxk2a-0 */
+
+            /* sc-component-id: Slide-bnah1s-0 */
+
+            /* sc-component-id: styled-knyj0u-0 */
+
+            /* sc-component-id: Modal__FillScreen-sc-1jmnqyd-0 */
+
+            /* sc-component-id: Modal__PositionerAbsolute-sc-1jmnqyd-1 */
+
+            /* sc-component-id: Modal__PositionerRelative-sc-1jmnqyd-2 */
+
+            /* sc-component-id: Modal__Dialog-sc-1jmnqyd-3 */
+
+            /* sc-component-id: sc-kkGfuU */
+
+            /* sc-component-id: sc-iAyFgw */
+        </style>
+        <style data-styled-components="">
+            /* sc-component-id: sc-hSdWYo */
+
+            /* sc-component-id: sc-eHgmQL */
+
+            /* sc-component-id: sc-cvbbAY */
+
+            /* sc-component-id: sc-jWBwVP */
+
+            /* sc-component-id: Content__DefaultWrapperComponent-sc-1npw367-0 */
+
+            /* sc-component-id: Content__HeaderOrFooter-sc-1npw367-2 */
+
+            /* sc-component-id: Content__Header-sc-1npw367-3 */
+
+            /* sc-component-id: Content__Title-sc-1npw367-4 */
+
+            /* sc-component-id: Content__TitleText-sc-1npw367-5 */
+
+            /* sc-component-id: Content__TitleIconWrapper-sc-1npw367-6 */
+
+            /* sc-component-id: Content__Body-sc-1npw367-7 */
+
+            /* sc-component-id: Content__Footer-sc-1npw367-9 */
+
+            /* sc-component-id: Content__Actions-sc-1npw367-10 */
+
+            /* sc-component-id: Content__ActionItem-sc-1npw367-11 */
+
+            /* sc-component-id: styled__Tabs-sc-716rt7-0 */
+
+            /* sc-component-id: styled__TabPane-sc-716rt7-1 */
+
+            /* sc-component-id: styled__NavWrapper-sc-716rt7-2 */
+
+            /* sc-component-id: styled__Nav-sc-716rt7-3 */
+
+            /* sc-component-id: styled__NavLine-sc-716rt7-4 */
+
+            /* sc-component-id: styled__NavItem-sc-716rt7-5 */
+
+            /* sc-component-id: Checkbox__HiddenCheckbox-sc-1asqokg-0 */
+
+            /* sc-component-id: Checkbox__Label-sc-1asqokg-1 */
+
+            /* sc-component-id: Checkbox__LabelText-sc-1asqokg-2 */
+
+            /* sc-component-id: Checkbox__CheckboxWrapper-sc-1asqokg-3 */
+
+            /* sc-component-id: Checkbox__IconWrapper-sc-1asqokg-4 */
+
+            /* sc-component-id: Input__InputElement-sc-1o6bj35-0 */
+
+            /* sc-component-id: FieldTextStateless__Wrapper-ynbdsh-0 */
+
+            /* sc-component-id: TextArea-l4fqfr-0 */
+
+            /* sc-component-id: FieldTextAreaStateless__Wrapper-sc-159dr31-0 */
+
+            /* sc-component-id: WidthConstrainer-sc-15doeus-0 */
+
+            /* sc-component-id: styledIconForType__IconWrapper-sc-1aldrej-0 */
+
+            /* sc-component-id: styledInlineMessage__Root-sc-1o0swkp-0 */
+
+            /* sc-component-id: styledInlineMessage__ButtonContents-sc-1o0swkp-1 */
+
+            /* sc-component-id: styledInlineMessage__Title-sc-1o0swkp-2 */
+
+            /* sc-component-id: styledInlineMessage__Text-sc-1o0swkp-3 */
+
+            /* sc-component-id: styledContainer-sc-1vjy1uk-0 */
+
+            /* sc-component-id: styledContent-ku88a7-0 */
+        </style>
+        <title>Fresh Meet</title>
+        <meta property="og:title" content="Jitsi Meet">
+        <meta property="og:image" content="images/jitsilogo.png?v=1">
+        <meta property="og:description"
+            content="Join a WebRTC video conference powered by the Jitsi Videobridge">
+        <meta
+            description="Join a WebRTC video conference powered by the Jitsi Videobridge">
+        <meta itemprop="name" content="Jitsi Meet">
+        <meta itemprop="description"
+            content="Join a WebRTC video conference powered by the Jitsi Videobridge">
+        <meta itemprop="image" content="images/jitsilogo.png?v=1">
+        <link rel="icon" type="image/png" href="images/favicon.ico?v=1">
+
+
+        <template id="welcome-page-additional-content-template"></template>
+
+        <template id="welcome-page-additional-card-template"></template>
+
+        <template id="settings-toolbar-additional-content-template"></template>
+
+        <style type="text/css">
+            body {
+                background: #1B2638;
+            }
+        </style>
+        <style type="text/css">
+            body {
+                background: #1B2638;
+            }
+        </style>
+    </head>
+
+    <body class="welcome-page" data-new-gr-c-s-check-loaded="14.984.0"
+        data-gr-ext-installed="">
+        <noscript>
+            <div>JavaScript is disabled. </br>For this site to work you have to
+                enable JavaScript.</div>
+        </noscript>
+
+        <div id="react"></div>
+
+
+    </body>
+
 </html>

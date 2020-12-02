@@ -96,7 +96,9 @@ class LobbyScreen extends AbstractLobbyScreen {
                 onChange = { this._onChangeDisplayName }
                 placeHolder = { t('lobby.nameField') }
                 testId = 'lobby.nameField'
-                value = { displayName } />
+                value = { displayName }
+                disbaled = { !!displayName }
+                />
         );
     }
 
