@@ -64,6 +64,10 @@ export function getInviteURL(stateOrGetState: Function | Object): string {
         return `${inviteDomain}/${meetingId}`;
     }
 
+    if(interfaceConfig.FS_INVITE_PROXY) {
+        return interfaceConfig.FS_INVITE_PROXY;
+    }
+
     if(interfaceConfig.FS_ACCOUNT_DOMAIN) {
         const meetingId
             = state['features/base/config'].brandingRoomAlias || urlWithoutParams.pathname.replace(/\//, '');
