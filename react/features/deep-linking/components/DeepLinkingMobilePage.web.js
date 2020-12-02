@@ -120,7 +120,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                             ? null
                             : <img
                                 className = 'logo'
-                                src = 'images/logo-deep-linking.png' />
+                                src = 'images/logo-deep.png' />
                     }
                 </div>
                 <div className = { `${_SNS}__body` }>
