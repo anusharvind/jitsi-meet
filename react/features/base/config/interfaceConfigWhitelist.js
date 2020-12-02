@@ -67,5 +67,6 @@ export default [
     'SHOW_POWERED_BY',
     'SHOW_PROMOTIONAL_CLOSE_PAGE',
     'FS_ACCOUNT_DOMAIN',
-    'FS_INVITE_PROXY'
+    'FS_INVITE_PROXY',
+    'CUSTOM_SUBJECT'
 ];

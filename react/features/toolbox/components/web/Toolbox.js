@@ -1235,7 +1235,7 @@ class Toolbox extends Component<Props, State> {
             buttonsRight.push('overflowmenu');
         }
         if (this._shouldShowButton('invite')) {
-            buttonsRight.push('invite');
+            // buttonsRight.push('invite');
         }
         if (this._shouldShowButton('security') || this._shouldShowButton('info')) {
             buttonsRight.push('security');

@@ -74,7 +74,7 @@ function _mapStateToProps(state) {
 
     return {
         _showParticipantCount: participantCount > 2,
-        _subject: getConferenceName(state),
+        _subject: interfaceConfig.CUSTOM_SUBJECT || getConferenceName(state),
         _visible: isToolboxVisible(state) && participantCount > 1
     };
 }
