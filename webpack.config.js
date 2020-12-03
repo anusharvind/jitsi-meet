@@ -292,6 +292,7 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
+    console.log('Requested For:', path);
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/')
             || path.startsWith('/images/')
@@ -300,7 +301,7 @@ function devServerProxyBypass({ path }) {
             || path.startsWith('/static/')
             || path.endsWith('.wasm')
             || path.startsWith('/sockjs-node/')) {
-
+        console.log('Resolved For:', path);
         return path;
     }
 
@@ -327,14 +328,17 @@ function devServerProxyBypass({ path }) {
                     }
                 }
             })) {
+        console.log('Resolved For:', path);
         return path;
     }
 
     if (path.startsWith('/libs/')) {
+        console.log('Resolved For:', path);
         return path;
     }
 
     if((path === '/') || (path.split('.').length ===1)) {
+        console.log('Resolved For: index.html');
         return 'index.html';
     }
 }
