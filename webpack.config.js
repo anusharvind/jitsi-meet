@@ -298,7 +298,8 @@ function devServerProxyBypass({ path }) {
             || path.startsWith('/lang/')
             || path.startsWith('/sounds/')
             || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+            || path.endsWith('.wasm')
+            || path.startsWith('/sockjs-node/')) {
 
         return path;
     }
